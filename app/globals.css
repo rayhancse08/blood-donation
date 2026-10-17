@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9fafb;
+  --foreground: #111827;
 }
 
 @theme inline {
@@ -12,15 +12,113 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Map pins (Leaflet divIcon) */
+.leaflet-container {
+  font: inherit;
+}
+
+.map-pin {
+  background: transparent;
+  border: 0;
+}
+
+.map-pin-body {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  border-radius: 9999px;
+  padding: 2px 8px 2px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff;
+  color: #111827;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+  cursor: pointer;
+}
+
+.map-pin-body::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom: 0;
+  border-top-color: inherit;
+}
+
+.map-pin-group {
+  display: inline-flex;
+  min-width: 26px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 11px;
+  padding: 0 4px;
+}
+
+.map-pin-label:empty {
+  display: none;
+}
+
+.map-pin-request {
+  background: #111827;
+  color: #fff;
+}
+
+.map-pin-emergency {
+  background: #dc2626;
+  color: #fff;
+  animation: pin-pulse 1.4s ease-in-out infinite;
+}
+
+.map-pin-emergency .map-pin-group {
+  background: #fff;
+  color: #dc2626;
+}
+
+.map-pin-selected {
+  outline: 3px solid #f59e0b;
+  z-index: 1000;
+}
+
+.map-pin-me {
+  background: #2563eb;
+  color: #fff;
+  padding: 2px;
+}
+
+.map-pin-me .map-pin-group {
+  background: #2563eb;
+}
+
+@keyframes pin-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(220 38 38 / 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgb(220 38 38 / 0);
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
 }

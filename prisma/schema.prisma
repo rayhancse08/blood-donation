@@ -1,0 +1,650 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ActiveMode {
+  RECEIVER
+  DONOR
+}
+
+enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum LocationPrecision {
+  EXACT
+  APPROXIMATE
+}
+
+enum IdType {
+  NID
+  BIRTH_REGISTRATION
+}
+
+enum VerificationStatus {
+  NONE
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum OtpChannel {
+  PHONE
+  EMAIL
+}
+
+enum RequestStatus {
+  OPEN
+  ACCEPTED
+  FULFILLED
+  CANCELLED
+}
+
+enum Urgency {
+  NORMAL
+  URGENT
+  CRITICAL
+}
+
+enum ResponseStatus {
+  ACCEPTED
+  DECLINED
+}
+
+enum DonationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum FacilityType {
+  HOSPITAL
+  CLINIC
+  DIAGNOSTIC_CENTER
+  PHARMACY
+  AMBULANCE
+  DONATION_CENTER
+  BLOOD_BANK
+}
+
+enum PartnerStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  READY_FOR_PICKUP
+  COMPLETED
+  CANCELLED
+}
+
+enum FulfillmentType {
+  DELIVERY
+  PICKUP
+}
+
+enum PaymentMethod {
+  BKASH
+  NAGAD
+  CARD
+  BANK
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentPurpose {
+  MEDICINE_ORDER
+  SERVICE
+}
+
+enum NotificationType {
+  BLOOD_REQUEST
+  EMERGENCY
+  REQUEST_UPDATE
+  MESSAGE
+  DONATION
+  ORDER
+  PAYMENT
+  AVAILABILITY
+  PARTNER
+  SYSTEM
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+enum ContentType {
+  ARTICLE
+  TIP
+  CAMPAIGN
+  EVENT
+  DONATION_DRIVE
+  MEDICINE_INFO
+  DONATION_GUIDE
+}
+
+enum Language {
+  EN
+  BN
+}
+
+// ---------------------------------------------------------------------------
+// Users, auth & identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id       String  @id @default(cuid())
+  phone    String? @unique
+  email    String? @unique
+  googleId String? @unique
+  role     Role    @default(USER)
+
+  isSuspended Boolean @default(false)
+
+  // Profile
+  name                  String?
+  photoUrl              String?
+  dateOfBirth           DateTime?
+  gender                Gender?
+  bloodGroup            BloodGroup?
+  division              String?
+  district              String?
+  upazila               String?
+  thana                 String?
+  addressLine           String?
+  contactPhone          String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  profileCompleted      Boolean     @default(false)
+
+  // Roles: every user is a receiver by default and can also become a donor
+  isReceiver Boolean    @default(true)
+  isDonor    Boolean    @default(false)
+  activeMode ActiveMode @default(RECEIVER)
+
+  // Donor availability & location
+  isAvailable       Boolean           @default(false)
+  latitude          Float?
+  longitude         Float?
+  locationPrecision LocationPrecision @default(APPROXIMATE)
+  locationUpdatedAt DateTime?
+  lastDonationAt    DateTime?
+  hiddenUntil       DateTime?
+
+  // Identity verification (NID / birth registration), number stored encrypted
+  idType               IdType?
+  idNumberEncrypted    String?
+  idNumberHash         String?            @unique
+  idDocumentKey        String?
+  idVerificationStatus VerificationStatus @default(NONE)
+  idVerifiedAt         DateTime?
+  idReviewNote         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions          Session[]
+  bloodRequests     BloodRequest[]    @relation("RequestCreator")
+  requestResponses  RequestResponse[]
+  donations         Donation[]        @relation("DonorDonations")
+  reviewedDonations Donation[]        @relation("DonationReviewer")
+  notifications     Notification[]
+  sentMessages      Message[]
+  conversationsA    Conversation[]    @relation("ConversationUserA")
+  conversationsB    Conversation[]    @relation("ConversationUserB")
+  blocksMade        Block[]           @relation("Blocker")
+  blocksReceived    Block[]           @relation("Blocked")
+  reportsMade       Report[]          @relation("Reporter")
+  reportsReceived   Report[]          @relation("ReportedUser")
+  ownedFacilities   Facility[]
+  orders            Order[]
+  payments          Payment[]
+  contents          Content[]
+  aiMessages        AiMessage[]
+
+  @@index([bloodGroup, isAvailable])
+  @@index([district])
+  @@index([latitude, longitude])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model OtpCode {
+  id            String     @id @default(cuid())
+  channel       OtpChannel
+  target        String
+  codeHash      String
+  linkTokenHash String?    @unique
+  attempts      Int        @default(0)
+  expiresAt     DateTime
+  consumedAt    DateTime?
+  createdAt     DateTime   @default(now())
+
+  @@index([target, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Blood requests & donations
+// ---------------------------------------------------------------------------
+
+model BloodRequest {
+  id           String        @id @default(cuid())
+  requesterId  String
+  requester    User          @relation("RequestCreator", fields: [requesterId], references: [id], onDelete: Cascade)
+  patientName  String?
+  bloodGroup   BloodGroup
+  units        Int           @default(1)
+  hospitalName String
+  facilityId   String?
+  facility     Facility?     @relation(fields: [facilityId], references: [id], onDelete: SetNull)
+  division     String?
+  district     String?
+  upazila      String?
+  thana        String?
+  address      String?
+  latitude     Float?
+  longitude    Float?
+  neededBy     DateTime
+  urgency      Urgency       @default(NORMAL)
+  isEmergency  Boolean       @default(false)
+  contactPhone String
+  notes        String?
+  status       RequestStatus @default(OPEN)
+  alertedCount Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  responses     RequestResponse[]
+  donations     Donation[]
+  conversations Conversation[]
+  reports       Report[]
+
+  @@index([status, bloodGroup])
+  @@index([district])
+  @@index([requesterId])
+}
+
+model RequestResponse {
+  id        String         @id @default(cuid())
+  requestId String
+  request   BloodRequest   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  donorId   String
+  donor     User           @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  status    ResponseStatus
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([requestId, donorId])
+  @@index([donorId])
+}
+
+model Donation {
+  id           String         @id @default(cuid())
+  donorId      String
+  donor        User           @relation("DonorDonations", fields: [donorId], references: [id], onDelete: Cascade)
+  requestId    String?
+  request      BloodRequest?  @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  facilityId   String?
+  facility     Facility?      @relation(fields: [facilityId], references: [id], onDelete: SetNull)
+  donatedAt    DateTime
+  place        String
+  receiverName String?
+  units        Int            @default(1)
+  documentKey  String
+  status       DonationStatus @default(PENDING)
+  reviewNote   String?
+  reviewedById String?
+  reviewedBy   User?          @relation("DonationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt   DateTime?
+  createdAt    DateTime       @default(now())
+
+  @@index([donorId, status])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Healthcare directory, partners & pharmacy marketplace
+// ---------------------------------------------------------------------------
+
+model Facility {
+  id              String        @id @default(cuid())
+  type            FacilityType
+  name            String
+  description     String?
+  phone           String?
+  email           String?
+  website         String?
+  division        String?
+  district        String?
+  upazila         String?
+  thana           String?
+  address         String?
+  latitude        Float?
+  longitude       Float?
+  openingHours    String?
+  is24Hours       Boolean       @default(false)
+  services        String[]
+  ownerId         String?
+  owner           User?         @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  partnerStatus   PartnerStatus @default(NONE)
+  discountPercent Int           @default(0)
+  discountTerms   String?
+  licenseNumber   String?
+  licenseDocKey   String?
+  licenseVerified Boolean       @default(false)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  doctors       Doctor[]
+  stock         PharmacyStock[]
+  orders        Order[]
+  payments      Payment[]
+  offers        PartnerOffer[]
+  bloodRequests BloodRequest[]
+  donations     Donation[]
+
+  @@index([type, district])
+  @@index([partnerStatus])
+}
+
+model Doctor {
+  id              String    @id @default(cuid())
+  name            String
+  speciality      String
+  qualifications  String?
+  bio             String?
+  photoUrl        String?
+  phone           String?
+  facilityId      String?
+  facility        Facility? @relation(fields: [facilityId], references: [id], onDelete: SetNull)
+  chamberName     String?
+  chamberAddress  String?
+  division        String?
+  district        String?
+  latitude        Float?
+  longitude       Float?
+  visitingHours   String?
+  consultationFee Int?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  @@index([speciality])
+  @@index([district])
+}
+
+model Medicine {
+  id                   String   @id @default(cuid())
+  name                 String
+  genericName          String?
+  manufacturer         String?
+  strength             String?
+  form                 String?
+  description          String?
+  usage                String?
+  sideEffects          String?
+  requiresPrescription Boolean  @default(false)
+  createdAt            DateTime @default(now())
+
+  stock      PharmacyStock[]
+  orderItems OrderItem[]
+
+  @@index([name])
+  @@index([genericName])
+}
+
+model PharmacyStock {
+  id         String   @id @default(cuid())
+  pharmacyId String
+  pharmacy   Facility @relation(fields: [pharmacyId], references: [id], onDelete: Cascade)
+  medicineId String
+  medicine   Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  price      Int
+  quantity   Int
+  updatedAt  DateTime @updatedAt
+
+  @@unique([pharmacyId, medicineId])
+  @@index([medicineId])
+}
+
+model Order {
+  id              String          @id @default(cuid())
+  orderNo         String          @unique
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pharmacyId      String
+  pharmacy        Facility        @relation(fields: [pharmacyId], references: [id], onDelete: Cascade)
+  status          OrderStatus     @default(PENDING)
+  fulfillment     FulfillmentType
+  deliveryAddress String?
+  contactPhone    String
+  prescriptionKey String?
+  note            String?
+  subtotal        Int
+  discount        Int             @default(0)
+  deliveryFee     Int             @default(0)
+  total           Int
+  paymentMethod   PaymentMethod
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  items   OrderItem[]
+  payment Payment?
+
+  @@index([userId])
+  @@index([pharmacyId, status])
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  medicineId String
+  medicine   Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  name       String
+  unitPrice  Int
+  quantity   Int
+}
+
+model Payment {
+  id            String         @id @default(cuid())
+  receiptNo     String         @unique
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  facilityId    String?
+  facility      Facility?      @relation(fields: [facilityId], references: [id], onDelete: SetNull)
+  orderId       String?        @unique
+  order         Order?         @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  purpose       PaymentPurpose
+  description   String?
+  amount        Int
+  discount      Int            @default(0)
+  total         Int
+  method        PaymentMethod
+  status        PaymentStatus  @default(PENDING)
+  gatewayRef    String?
+  transactionId String?
+  paidAt        DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([facilityId, status])
+}
+
+model PartnerOffer {
+  id           String    @id @default(cuid())
+  facilityId   String
+  facility     Facility  @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  code         String?
+  minDonations Int       @default(1)
+  isActive     Boolean   @default(true)
+  validUntil   DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Messaging, safety & notifications
+// ---------------------------------------------------------------------------
+
+model Conversation {
+  id            String        @id @default(cuid())
+  userAId       String
+  userA         User          @relation("ConversationUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userBId       String
+  userB         User          @relation("ConversationUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  requestId     String?
+  request       BloodRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  lastMessageAt DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+
+  messages Message[]
+
+  @@unique([userAId, userBId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body           String
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model Block {
+  blockerId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedId String
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([blockerId, blockedId])
+}
+
+model Report {
+  id             String        @id @default(cuid())
+  reporterId     String
+  reporter       User          @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUserId String?
+  reportedUser   User?         @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+  requestId      String?
+  request        BloodRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  reason         String
+  details        String?
+  status         ReportStatus  @default(OPEN)
+  adminNote      String?
+  createdAt      DateTime      @default(now())
+  resolvedAt     DateTime?
+
+  @@index([status])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Awareness content & AI assistant
+// ---------------------------------------------------------------------------
+
+model Content {
+  id        String      @id @default(cuid())
+  type      ContentType
+  title     String
+  slug      String      @unique
+  summary   String?
+  body      String
+  coverUrl  String?
+  language  Language    @default(EN)
+  eventDate DateTime?
+  location  String?
+  published Boolean     @default(false)
+  authorId  String?
+  author    User?       @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([type, published])
+}
+
+model AiMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}

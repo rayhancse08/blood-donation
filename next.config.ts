@@ -1,9 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  serverExternalPackages: ["ws", "@neondatabase/serverless"],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "8mb",
+    },
+  },
   turbopack: {
     rules: {
       "*.css": {
