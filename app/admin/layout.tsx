@@ -19,10 +19,10 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   await requireAdmin();
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 lg:flex-row">
-      <aside className="lg:w-56 lg:shrink-0">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 sm:gap-6 sm:py-8 lg:flex-row">
+      <aside className="min-w-0 lg:w-56 lg:shrink-0">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">Admin panel</p>
-        <nav className="flex gap-1 overflow-x-auto lg:flex-col">
+        <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-col lg:px-0 lg:pb-0">
           {LINKS.map((link) => (
             <Link key={link.href} href={link.href} className="whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:shadow-sm">
               {link.label}

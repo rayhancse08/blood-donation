@@ -26,7 +26,7 @@ export default async function LoginPage({
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
-      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
         <h1 className="text-2xl font-bold">Welcome to Blood App</h1>
         <p className="mb-6 mt-1 text-sm text-gray-600">
           Sign in or create an account. New users start as a receiver and can become a donor anytime.

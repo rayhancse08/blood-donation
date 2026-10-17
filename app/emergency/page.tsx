@@ -38,18 +38,18 @@ export default async function EmergencyPage() {
 
   return (
     <PageContainer className="max-w-5xl space-y-6">
-      <div className="rounded-2xl bg-red-600 p-6 text-white shadow-lg">
-        <h1 className="text-3xl font-extrabold">Emergency</h1>
-        <p className="mt-1 text-red-50">
+      <div className="rounded-2xl bg-red-600 p-4 text-white shadow-lg sm:p-6">
+        <h1 className="text-2xl font-extrabold sm:text-3xl">Emergency</h1>
+        <p className="mt-1 text-sm text-red-50 sm:text-base">
           If someone&apos;s life is in danger, call {NATIONAL_EMERGENCY_NUMBER} or an ambulance first. Then use the button below to alert
           blood donors near you.
         </p>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <a href={`tel:${NATIONAL_EMERGENCY_NUMBER}`} className="rounded-lg bg-white px-5 py-3 font-bold text-red-700 shadow">
+        <div className="mt-4 grid gap-3 sm:flex sm:flex-wrap">
+          <a href={`tel:${NATIONAL_EMERGENCY_NUMBER}`} className="rounded-lg bg-white px-5 py-3 text-center font-bold text-red-700 shadow">
             Call {NATIONAL_EMERGENCY_NUMBER}
           </a>
           {ambulances[0]?.phone && (
-            <a href={`tel:${ambulances[0].phone}`} className="rounded-lg border border-white/60 px-5 py-3 font-semibold hover:bg-white/10">
+            <a href={`tel:${ambulances[0].phone}`} className="rounded-lg border border-white/60 px-5 py-3 text-center font-semibold hover:bg-white/10">
               Call nearest ambulance
             </a>
           )}
@@ -156,7 +156,7 @@ function FacilityCallList({
             </p>
           </div>
           {f.phone && (
-            <a href={`tel:${f.phone}`} className={buttonClass.success}>
+            <a href={`tel:${f.phone}`} className={`${buttonClass.success} shrink-0`}>
               Call
             </a>
           )}

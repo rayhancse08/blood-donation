@@ -52,6 +52,7 @@ export function MapExplorer({
   const [selected, setSelected] = useState<Selection | null>(null);
   const [me, setMe] = useState<[number, number] | null>(null);
   const [locating, setLocating] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const query = useMemo(() => {
     const params = new URLSearchParams();
@@ -96,6 +97,23 @@ export function MapExplorer({
   }, [data.donors, me]);
 
   const selectedRequest = selected?.kind === "request" ? data.requests.find((r) => r.id === selected.id) : undefined;
+  const detail =
+    selected?.kind === "donor" ? (
+      <DonorCard key={selected.id} id={selected.id} me={me} isLoggedIn={isLoggedIn} onClose={() => setSelected(null)} />
+    ) : selectedRequest ? (
+      <RequestCard request={selectedRequest} me={me} onClose={() => setSelected(null)} />
+    ) : null;
+  const extraFilterCount =
+    [filters.division, filters.district, filters.upazila.trim(), filters.thana.trim()].filter(Boolean).length + (filters.show === "all" ? 0 : 1);
+
+  const hasDetail = detail !== null;
+
+  useEffect(() => {
+    if (!hasDetail) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setSelected(null);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [hasDetail]);
 
   function update<K extends keyof Filters>(key: K, value: Filters[K]) {
     setFilters((current) => ({ ...current, [key]: value, ...(key === "division" ? { district: "" } : {}) }));
@@ -116,8 +134,13 @@ export function MapExplorer({
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-7">
-        <select value={filters.bloodGroup} onChange={(e) => update("bloodGroup", e.target.value)} className={inputClass} aria-label="Blood group">
+      <div className="grid grid-cols-2 gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4 lg:grid-cols-7">
+        <select
+          value={filters.bloodGroup}
+          onChange={(e) => update("bloodGroup", e.target.value)}
+          className={cn(inputClass, "col-span-2 sm:col-span-1")}
+          aria-label="Blood group"
+        >
           <option value="">All blood groups</option>
           {BLOOD_GROUPS.map((g) => (
             <option key={g.value} value={g.value}>
@@ -125,59 +148,89 @@ export function MapExplorer({
             </option>
           ))}
         </select>
-        <select value={filters.division} onChange={(e) => update("division", e.target.value)} className={inputClass} aria-label="Division">
-          <option value="">All divisions</option>
-          {DIVISIONS.map((d) => (
-            <option key={d.name}>{d.name}</option>
-          ))}
-        </select>
-        <select
-          value={filters.district}
-          onChange={(e) => update("district", e.target.value)}
-          disabled={!filters.division}
-          className={inputClass}
-          aria-label="District"
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((v) => !v)}
+          aria-expanded={filtersOpen}
+          className={cn(buttonClass.secondary, "sm:hidden")}
         >
-          <option value="">All districts</option>
-          {districtsOf(filters.division).map((d) => (
-            <option key={d}>{d}</option>
-          ))}
-        </select>
-        <input value={filters.upazila} onChange={(e) => update("upazila", e.target.value)} placeholder="Upazila" className={inputClass} />
-        <input value={filters.thana} onChange={(e) => update("thana", e.target.value)} placeholder="Thana" className={inputClass} />
-        <select value={filters.show} onChange={(e) => update("show", e.target.value as Filters["show"])} className={inputClass} aria-label="Show">
-          <option value="all">Donors & requests</option>
-          <option value="donors">Donors only</option>
-          <option value="requests">Requests only</option>
-        </select>
-        <button type="button" onClick={locate} className={buttonClass.secondary}>
+          {filtersOpen ? "Hide filters" : "More filters"}
+          {extraFilterCount > 0 && <span className="rounded-full bg-red-600 px-1.5 text-xs text-white">{extraFilterCount}</span>}
+        </button>
+        <button type="button" onClick={locate} className={cn(buttonClass.secondary, "sm:order-last")}>
           {locating ? "Locating…" : "Near me"}
         </button>
+        <div className={cn(filtersOpen ? "col-span-2 grid grid-cols-2 gap-3" : "hidden", "sm:contents")}>
+          <select value={filters.division} onChange={(e) => update("division", e.target.value)} className={inputClass} aria-label="Division">
+            <option value="">All divisions</option>
+            {DIVISIONS.map((d) => (
+              <option key={d.name}>{d.name}</option>
+            ))}
+          </select>
+          <select
+            value={filters.district}
+            onChange={(e) => update("district", e.target.value)}
+            disabled={!filters.division}
+            className={inputClass}
+            aria-label="District"
+          >
+            <option value="">All districts</option>
+            {districtsOf(filters.division).map((d) => (
+              <option key={d}>{d}</option>
+            ))}
+          </select>
+          <input value={filters.upazila} onChange={(e) => update("upazila", e.target.value)} placeholder="Upazila" className={inputClass} />
+          <input value={filters.thana} onChange={(e) => update("thana", e.target.value)} placeholder="Thana" className={inputClass} />
+          <select
+            value={filters.show}
+            onChange={(e) => update("show", e.target.value as Filters["show"])}
+            className={cn(inputClass, "col-span-2 sm:col-span-1")}
+            aria-label="Show"
+          >
+            <option value="all">Donors & requests</option>
+            <option value="donors">Donors only</option>
+            <option value="requests">Requests only</option>
+          </select>
+        </div>
         {filters.bloodGroup && (
-          <label className="flex items-center gap-2 text-sm text-gray-700 sm:col-span-2 lg:col-span-7">
-            <input type="checkbox" checked={filters.compatible} onChange={(e) => update("compatible", e.target.checked)} />
+          <label className="col-span-2 flex items-start gap-2 text-sm text-gray-700 sm:order-last lg:col-span-7">
+            <input type="checkbox" checked={filters.compatible} onChange={(e) => update("compatible", e.target.checked)} className="mt-1" />
             Also show donors who are compatible with {bloodGroupLabel(filters.bloodGroup)} (e.g. O- for everyone)
           </label>
         )}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
-        <div className="relative h-[65vh] overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+        <div className="relative h-[55vh] min-h-80 overflow-hidden rounded-xl border border-gray-200 shadow-sm sm:h-[60vh] lg:h-[65vh]">
           <LeafletMap center={initialCenter} donors={data.donors} requests={data.requests} me={me} selected={selected} onSelect={setSelected} />
-          <div className="pointer-events-none absolute bottom-3 left-3 z-[500] flex gap-2 text-xs">
+          <div className="pointer-events-none absolute bottom-3 left-3 z-[500] flex flex-wrap gap-2 text-xs">
             <span className="rounded-full bg-white px-2 py-1 shadow">{data.donors.length} donors</span>
             <span className="rounded-full bg-white px-2 py-1 shadow">{data.requests.length} requests</span>
             {!loaded && <span className="rounded-full bg-white px-2 py-1 shadow">Loading…</span>}
           </div>
         </div>
 
-        <aside className="h-[65vh] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          {selected?.kind === "donor" ? (
-            <DonorCard key={selected.id} id={selected.id} me={me} isLoggedIn={isLoggedIn} onClose={() => setSelected(null)} />
-          ) : selectedRequest ? (
-            <RequestCard request={selectedRequest} me={me} onClose={() => setSelected(null)} />
-          ) : (
+        <aside className="max-h-[70vh] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-sm lg:h-[65vh] lg:max-h-none">
+          <div className={cn(detail && "lg:hidden")}>
             <ResultsList donors={sortedDonors} requests={data.requests} origin={origin} onSelect={setSelected} />
+          </div>
+          {detail && (
+            <>
+              <button
+                type="button"
+                aria-label="Close details"
+                onClick={() => setSelected(null)}
+                className="fixed inset-0 z-[1040] bg-black/30 lg:hidden"
+              />
+              <div
+                role="dialog"
+                aria-modal="true"
+                className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-[1050] max-h-[75dvh] overflow-y-auto overscroll-contain rounded-t-2xl bg-white shadow-2xl lg:static lg:z-auto lg:max-h-none lg:overflow-visible lg:rounded-none lg:shadow-none"
+              >
+                <div className="mx-auto mt-2 h-1.5 w-10 rounded-full bg-gray-300 lg:hidden" aria-hidden />
+                {detail}
+              </div>
+            </>
           )}
         </aside>
       </div>
@@ -229,7 +282,7 @@ function ResultsList({
               <li key={d.id}>
                 <button type="button" onClick={() => onSelect({ kind: "donor", id: d.id })} className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-gray-50">
                   <BloodGroupBadge group={d.bloodGroup} size="sm" />
-                  <span className="flex-1 truncate text-sm font-medium">{d.name}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{d.name}</span>
                   {origin && <span className="text-xs text-gray-500">{formatDistance(haversineKm(origin, d))}</span>}
                 </button>
               </li>
@@ -272,8 +325,8 @@ function DonorCard({
   }, [id, me, isLoggedIn]);
 
   return (
-    <div className="p-5">
-      <button type="button" onClick={onClose} className="mb-3 text-sm text-gray-600 hover:underline">
+    <div className="p-4 sm:p-5">
+      <button type="button" onClick={onClose} className="mb-3 py-1 text-sm text-gray-600 hover:underline">
         ← Back to list
       </button>
       {!isLoggedIn ? (
@@ -346,13 +399,13 @@ function DonorCard({
 function RequestCard({ request, me, onClose }: { request: RequestPin; me: [number, number] | null; onClose: () => void }) {
   const distance = me ? haversineKm({ lat: me[0], lng: me[1] }, request) : null;
   return (
-    <div className="space-y-4 p-5">
-      <button type="button" onClick={onClose} className="text-sm text-gray-600 hover:underline">
+    <div className="space-y-4 p-4 sm:p-5">
+      <button type="button" onClick={onClose} className="py-1 text-sm text-gray-600 hover:underline">
         ← Back to list
       </button>
       <div className="flex items-center gap-3">
         <BloodGroupBadge group={request.bloodGroup} size="lg" />
-        <div>
+        <div className="min-w-0">
           <p className="text-lg font-semibold">{request.hospitalName}</p>
           <div className="flex flex-wrap gap-1">
             {request.isEmergency && <Badge tone="red">Emergency</Badge>}
@@ -377,8 +430,8 @@ function RequestCard({ request, me, onClose }: { request: RequestPin; me: [numbe
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex justify-between gap-3 border-b border-gray-100 py-1.5">
-      <dt className="text-gray-500">{label}</dt>
-      <dd className="text-right font-medium">{children}</dd>
+      <dt className="shrink-0 text-gray-500">{label}</dt>
+      <dd className="min-w-0 break-words text-right font-medium">{children}</dd>
     </div>
   );
 }

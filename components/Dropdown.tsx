@@ -8,14 +8,14 @@ export function Dropdown({ label, children, align = "right" }: { label: ReactNod
 
   useEffect(() => {
     if (!open) return;
-    const onClick = (event: MouseEvent) => {
+    const onClick = (event: PointerEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
-    document.addEventListener("mousedown", onClick);
+    document.addEventListener("pointerdown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("pointerdown", onClick);
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -30,7 +30,7 @@ export function Dropdown({ label, children, align = "right" }: { label: ReactNod
           onClick={(event) => {
             if ((event.target as HTMLElement).closest("a")) setOpen(false);
           }}
-          className={`absolute z-[1200] mt-2 w-60 rounded-xl border border-gray-200 bg-white p-2 shadow-lg ${align === "right" ? "right-0" : "left-0"}`}
+          className={`absolute z-[1200] mt-2 max-h-[calc(100dvh-5rem)] w-64 max-w-[calc(100vw-1.5rem)] overflow-y-auto overscroll-contain rounded-xl border border-gray-200 bg-white p-2 shadow-lg ${align === "right" ? "right-0" : "left-0"}`}
         >
           {children}
         </div>

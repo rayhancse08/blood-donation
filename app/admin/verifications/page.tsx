@@ -91,7 +91,7 @@ async function DonationQueue() {
             </div>
             <form className="space-y-2">
               <textarea name="note" rows={2} placeholder="Note to donor (required when rejecting)" className={inputClass} />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button formAction={reviewDonationAction.bind(null, d.id, true)} className={buttonClass.success}>
                   Verify donation
                 </button>
@@ -156,7 +156,7 @@ async function IdentityQueue() {
             </div>
             <form className="space-y-2">
               <textarea name="note" rows={2} placeholder="Note to user (required when rejecting)" className={inputClass} />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button formAction={reviewIdentityAction.bind(null, u.id, true)} className={buttonClass.success}>
                   Approve
                 </button>

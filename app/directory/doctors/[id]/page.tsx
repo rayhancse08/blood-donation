@@ -18,11 +18,11 @@ export default async function DoctorPage({ params }: { params: Promise<{ id: str
 
   return (
     <PageContainer className="max-w-3xl">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex items-center gap-4">
-          <Avatar name={doctor.name} src={doctor.photoUrl} size={72} />
-          <div>
-            <h1 className="text-2xl font-bold">{doctor.name}</h1>
+          <Avatar name={doctor.name} src={doctor.photoUrl} size={64} />
+          <div className="min-w-0">
+            <h1 className="break-words text-xl font-bold sm:text-2xl">{doctor.name}</h1>
             <Badge tone="purple">{doctor.speciality}</Badge>
             {doctor.qualifications && <p className="mt-1 text-sm text-gray-600">{doctor.qualifications}</p>}
           </div>

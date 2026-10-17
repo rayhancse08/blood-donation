@@ -24,8 +24,13 @@ export function ReportButton({
         {label}
       </button>
       {open && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 p-4" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl" onClick={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-[2000] flex items-end justify-center bg-black/40 sm:items-center sm:p-4" onClick={() => setOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-5 pb-[calc(1.25rem_+_env(safe-area-inset-bottom))] shadow-xl sm:rounded-xl sm:pb-5"
+            onClick={(event) => event.stopPropagation()}
+          >
             <h3 className="mb-3 text-lg font-semibold">Report a problem</h3>
             <ActionForm action={reportAction} resetOnSuccess>
               {reportedUserId && <input type="hidden" name="reportedUserId" value={reportedUserId} />}

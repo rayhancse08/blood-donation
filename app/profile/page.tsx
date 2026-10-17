@@ -83,7 +83,7 @@ export default async function ProfilePage() {
               You are in your 3-month rest period and hidden from the map until <strong>{formatDate(user.hiddenUntil)}</strong>.
             </p>
           ) : (
-            <form action={setAvailabilityAction.bind(null, !user.isAvailable)} className="flex items-center gap-4">
+            <form action={setAvailabilityAction.bind(null, !user.isAvailable)} className="flex flex-wrap items-center gap-3 sm:gap-4">
               <Badge tone={user.isAvailable ? "green" : "gray"}>{user.isAvailable ? "Available" : "Not available"}</Badge>
               <button type="submit" className={buttonClass.secondary}>
                 {user.isAvailable ? "Switch off" : "Switch on"}
@@ -145,7 +145,7 @@ export default async function ProfilePage() {
               </Field>
             </div>
             <Field label="Photo or scan of the document" hint="Optional, speeds up manual review. JPG, PNG or PDF, max 5 MB.">
-              <input type="file" name="document" accept="image/jpeg,image/png,image/webp,application/pdf" className="text-sm" />
+              <input type="file" name="document" accept="image/jpeg,image/png,image/webp,application/pdf" className="w-full max-w-full text-sm" />
             </Field>
             <SubmitButton>Submit for verification</SubmitButton>
           </ActionForm>

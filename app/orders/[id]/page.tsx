@@ -51,7 +51,7 @@ export default async function OrderPage({
 
       {order.status !== "CANCELLED" && (
         <Card title="Tracking">
-          <ol className="grid gap-2 sm:grid-cols-5">
+          <ol className="grid gap-2 sm:grid-flow-col sm:auto-cols-fr">
             {timeline.map((step, index) => (
               <li key={step} className="flex items-center gap-2 sm:flex-col sm:text-center">
                 <span
@@ -72,11 +72,11 @@ export default async function OrderPage({
       <Card title="Items">
         <ul className="divide-y divide-gray-100 text-sm">
           {order.items.map((item) => (
-            <li key={item.id} className="flex justify-between py-2">
-              <span>
+            <li key={item.id} className="flex justify-between gap-3 py-2">
+              <span className="min-w-0 break-words">
                 {item.name} × {item.quantity}
               </span>
-              <span>{formatTaka(item.unitPrice * item.quantity)}</span>
+              <span className="shrink-0">{formatTaka(item.unitPrice * item.quantity)}</span>
             </li>
           ))}
         </ul>

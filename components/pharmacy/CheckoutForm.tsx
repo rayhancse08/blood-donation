@@ -38,28 +38,34 @@ export function CheckoutForm({ defaultPhone, defaultAddress }: { defaultPhone: s
       <Card title={`Items from ${cart.pharmacyName}`}>
         <ul className="divide-y divide-gray-100">
           {cart.items.map((item) => (
-            <li key={item.medicineId} className="flex items-center gap-3 py-3">
-              <div className="min-w-0 flex-1">
+            <li key={item.medicineId} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
+              <div className="min-w-0 basis-full sm:flex-1 sm:basis-0">
                 <p className="truncate font-medium">{item.name}</p>
                 <p className="text-xs text-gray-500">
                   {formatTaka(item.price)} each{item.requiresPrescription ? " · Prescription required" : ""}
                 </p>
               </div>
               <div className="flex items-center gap-1">
-                <button type="button" className={buttonClass.small} onClick={() => cartActions.setQuantity(item.medicineId, item.quantity - 1)}>
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  className={`${buttonClass.small} h-8 w-8`}
+                  onClick={() => cartActions.setQuantity(item.medicineId, item.quantity - 1)}
+                >
                   −
                 </button>
                 <span className="w-8 text-center text-sm">{item.quantity}</span>
                 <button
                   type="button"
-                  className={buttonClass.small}
+                  aria-label="Increase quantity"
+                  className={`${buttonClass.small} h-8 w-8`}
                   disabled={item.quantity >= item.maxQuantity}
                   onClick={() => cartActions.setQuantity(item.medicineId, item.quantity + 1)}
                 >
                   +
                 </button>
               </div>
-              <p className="w-24 text-right text-sm font-semibold">{formatTaka(item.price * item.quantity)}</p>
+              <p className="ml-auto w-24 text-right text-sm font-semibold">{formatTaka(item.price * item.quantity)}</p>
             </li>
           ))}
         </ul>
@@ -103,7 +109,13 @@ export function CheckoutForm({ defaultPhone, defaultAddress }: { defaultPhone: s
             required={needsPrescription}
             hint={needsPrescription ? "Required for prescription-only medicines (JPG, PNG or PDF, max 5 MB)." : "Optional"}
           >
-            <input name="prescription" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required={needsPrescription} className="text-sm" />
+            <input
+              name="prescription"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,application/pdf"
+              required={needsPrescription}
+              className="w-full max-w-full text-sm"
+            />
           </Field>
 
           <Field label="Payment method" required>

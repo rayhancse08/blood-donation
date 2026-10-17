@@ -36,8 +36,8 @@ export default async function OrdersPage() {
             <li key={order.id}>
               <Link href={`/orders/${order.id}`} className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md">
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold">
-                    {order.pharmacy.name} <span className="font-mono text-xs text-gray-500">{order.orderNo}</span>
+                  <p className="break-words font-semibold">
+                    {order.pharmacy.name} <span className="whitespace-nowrap font-mono text-xs text-gray-500">{order.orderNo}</span>
                   </p>
                   <p className="text-sm text-gray-600">
                     {order._count.items} item(s) · {order.fulfillment === "DELIVERY" ? "Home delivery" : "Pickup"} · {formatDateTime(order.createdAt)}

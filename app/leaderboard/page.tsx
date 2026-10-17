@@ -37,8 +37,8 @@ export default async function LeaderboardPage() {
               if (!donor) return null;
               const count = entry._count.donorId;
               return (
-                <li key={entry.donorId} className="flex items-center gap-4 py-3">
-                  <span className={`w-8 text-center text-lg font-bold ${index < 3 ? "text-red-600" : "text-gray-400"}`}>{index + 1}</span>
+                <li key={entry.donorId} className="flex items-center gap-3 py-3 sm:gap-4">
+                  <span className={`w-6 shrink-0 text-center text-lg font-bold sm:w-8 ${index < 3 ? "text-red-600" : "text-gray-400"}`}>{index + 1}</span>
                   <Avatar name={donor.name} src={donor.photoUrl} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{donor.name ?? "Donor"}</p>
@@ -46,8 +46,10 @@ export default async function LeaderboardPage() {
                       {bloodGroupLabel(donor.bloodGroup)} · {donor.district ?? "Bangladesh"}
                     </p>
                   </div>
-                  <Badge tone="purple">{getRewardStatus(count).level.name}</Badge>
-                  <span className="w-20 text-right font-bold">{count}</span>
+                  <span className="hidden sm:inline-flex">
+                    <Badge tone="purple">{getRewardStatus(count).level.name}</Badge>
+                  </span>
+                  <span className="w-10 shrink-0 text-right font-bold sm:w-20">{count}</span>
                 </li>
               );
             })}

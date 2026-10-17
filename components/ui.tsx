@@ -7,7 +7,8 @@ export function cn(...classes: (string | false | null | undefined)[]) {
 }
 
 export const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-100 disabled:bg-gray-100";
+  // 16px text below `sm` stops iOS Safari from zooming the page when an input is focused.
+  "w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-base shadow-sm placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-100 disabled:bg-gray-100 sm:text-sm";
 
 const buttonBase =
   "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60";
@@ -19,18 +20,19 @@ export const buttonClass = {
   success: `${buttonBase} bg-green-600 text-white hover:bg-green-700`,
   danger: `${buttonBase} border border-red-200 bg-red-50 text-red-700 hover:bg-red-100`,
   ghost: `${buttonBase} text-gray-700 hover:bg-gray-100`,
-  small: "inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50",
+  small:
+    "inline-flex items-center justify-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 sm:py-1",
 };
 
 export function PageContainer({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("mx-auto w-full max-w-6xl px-4 py-8", className)}>{children}</div>;
+  return <div className={cn("mx-auto w-full max-w-6xl px-4 py-6 sm:py-8", className)}>{children}</div>;
 }
 
 export function PageHeader({ title, description, actions }: { title: ReactNode; description?: ReactNode; actions?: ReactNode }) {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{title}</h1>
+      <div className="min-w-0">
+        <h1 className="break-words text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{title}</h1>
         {description && <p className="mt-1 text-sm text-gray-600">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -50,9 +52,9 @@ export function Card({
   actions?: ReactNode;
 }) {
   return (
-    <section className={cn("rounded-xl border border-gray-200 bg-white p-5 shadow-sm", className)}>
+    <section className={cn("min-w-0 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5", className)}>
       {(title || actions) && (
-        <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           {title && <h2 className="text-base font-semibold text-gray-900">{title}</h2>}
           {actions}
         </div>
@@ -74,7 +76,7 @@ const toneClasses: Record<Tone, string> = {
 
 export function Badge({ children, tone = "gray" }: { children: ReactNode; tone?: Tone }) {
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset", toneClasses[tone])}>
+    <span className={cn("inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset", toneClasses[tone])}>
       {children}
     </span>
   );
@@ -164,7 +166,7 @@ export function BloodGroupSelect({
 
 export function EmptyState({ title, description, action }: { title: string; description?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
+    <div className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-10 text-center sm:px-6 sm:py-12">
       <p className="font-semibold text-gray-900">{title}</p>
       {description && <p className="mt-1 text-sm text-gray-600">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
@@ -174,9 +176,9 @@ export function EmptyState({ title, description, action }: { title: string; desc
 
 export function Stat({ label, value, hint, href }: { label: string; value: ReactNode; hint?: ReactNode; href?: string }) {
   const body = (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="h-full rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4">
       <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
+      <p className="mt-1 break-words text-xl font-bold text-gray-900 sm:text-2xl">{value}</p>
       {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
     </div>
   );
@@ -212,13 +214,13 @@ export function Avatar({ name, src, size = 40 }: { name: string | null | undefin
 
 export function Tabs({ items, active }: { items: { href: string; label: string; key: string }[]; active: string }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-2 border-b border-gray-200 pb-2">
+    <div className="-mx-4 mb-6 flex gap-2 overflow-x-auto border-b border-gray-200 px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
       {items.map((item) => (
         <Link
           key={item.key}
           href={item.href}
           className={cn(
-            "rounded-full px-3 py-1.5 text-sm font-medium",
+            "shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium",
             item.key === active ? "bg-red-600 text-white" : "text-gray-700 hover:bg-gray-100",
           )}
         >
@@ -232,8 +234,8 @@ export function Tabs({ items, active }: { items: { href: string; label: string; 
 export function KeyValue({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex justify-between gap-4 border-b border-gray-100 py-2 text-sm last:border-0">
-      <dt className="text-gray-500">{label}</dt>
-      <dd className="text-right font-medium text-gray-900">{children}</dd>
+      <dt className="shrink-0 text-gray-500">{label}</dt>
+      <dd className="min-w-0 break-words text-right font-medium text-gray-900">{children}</dd>
     </div>
   );
 }

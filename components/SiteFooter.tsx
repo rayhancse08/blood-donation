@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="no-print mt-12 border-t border-gray-200 bg-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 text-sm text-gray-600 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
+    <footer className="no-print mt-8 border-t border-gray-200 bg-white sm:mt-12">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 text-sm text-gray-600 sm:gap-8 sm:py-10 lg:grid-cols-4">
+        <div className="col-span-2 sm:col-span-1">
           <p className="font-bold text-red-600">Blood App</p>
           <p className="mt-2">Connecting blood donors and receivers across Bangladesh, quickly and safely.</p>
         </div>
@@ -22,7 +22,7 @@ export function SiteFooter() {
           <Link href="/pay" className="block hover:underline">Pay a provider</Link>
           <Link href="/partner" className="block hover:underline">Become a partner</Link>
         </div>
-        <div className="space-y-1">
+        <div className="col-span-2 space-y-1 sm:col-span-1">
           <p className="font-semibold text-gray-900">In an emergency</p>
           <a href="tel:999" className="block font-semibold text-red-600 hover:underline">Call 999 (National emergency)</a>
           <p className="text-xs text-gray-500">

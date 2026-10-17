@@ -84,16 +84,16 @@ export default async function RequestDetailPage({
         </Alert>
       )}
 
-      <div className={`rounded-2xl border bg-white p-6 shadow-sm ${request.isEmergency ? "border-red-300" : "border-gray-200"}`}>
+      <div className={`rounded-2xl border bg-white p-4 shadow-sm sm:p-6 ${request.isEmergency ? "border-red-300" : "border-gray-200"}`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <BloodGroupBadge group={request.bloodGroup} size="lg" />
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap gap-1">
               {request.isEmergency && <Badge tone="red">Emergency</Badge>}
               <Badge tone={URGENCY_TONE[request.urgency]}>{labelOf(URGENCIES, request.urgency)}</Badge>
               <Badge tone={REQUEST_STATUS_TONE[request.status]}>{labelOf(REQUEST_STATUSES, request.status)}</Badge>
             </div>
-            <h1 className="mt-2 text-2xl font-bold">
+            <h1 className="mt-2 text-xl font-bold sm:text-2xl">
               {request.units} unit(s) of {bloodGroupLabel(request.bloodGroup)} needed
             </h1>
             <p className="text-gray-600">
@@ -258,19 +258,21 @@ export default async function RequestDetailPage({
                         {donorDistance != null && ` · ${formatDistance(donorDistance)} from hospital`}
                       </p>
                     </div>
-                    {phone && (
-                      <a href={`tel:${phone}`} className={buttonClass.success}>
-                        Call
-                      </a>
-                    )}
-                    <form action={startConversationAction}>
-                      <input type="hidden" name="otherUserId" value={donor.id} />
-                      <input type="hidden" name="requestId" value={request.id} />
-                      <button type="submit" className={buttonClass.secondary}>
-                        Message
-                      </button>
-                    </form>
-                    <ReportButton reportedUserId={donor.id} />
+                    <div className="flex w-full flex-wrap items-center gap-2 pl-[3.25rem] sm:w-auto sm:pl-0">
+                      {phone && (
+                        <a href={`tel:${phone}`} className={buttonClass.success}>
+                          Call
+                        </a>
+                      )}
+                      <form action={startConversationAction}>
+                        <input type="hidden" name="otherUserId" value={donor.id} />
+                        <input type="hidden" name="requestId" value={request.id} />
+                        <button type="submit" className={buttonClass.secondary}>
+                          Message
+                        </button>
+                      </form>
+                      <ReportButton reportedUserId={donor.id} />
+                    </div>
                   </li>
                 );
               })}

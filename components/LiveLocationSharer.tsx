@@ -74,10 +74,11 @@ export function LiveLocationSharer() {
       type="button"
       onClick={() => setEnabled(!enabled)}
       title={enabled ? "Live location sharing is on. Click to stop." : "Share your live location while you are available"}
-      className="hidden items-center gap-1.5 rounded-full border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 sm:inline-flex"
+      aria-pressed={enabled}
+      className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 sm:px-2.5"
     >
       <span className={`h-2 w-2 rounded-full ${dot}`} />
-      Live {enabled ? "on" : "off"}
+      Live<span className="hidden sm:inline"> {enabled ? "on" : "off"}</span>
     </button>
   );
 }

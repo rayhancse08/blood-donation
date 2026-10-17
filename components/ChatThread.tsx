@@ -90,8 +90,8 @@ export function ChatThread({
   }
 
   return (
-    <div className="flex h-[65vh] flex-col rounded-xl border border-gray-200 bg-white">
-      <div className="flex-1 space-y-2 overflow-y-auto p-4">
+    <div className="flex h-[calc(100dvh_-_var(--mobile-nav-height)_-_14rem)] min-h-80 flex-col rounded-xl border border-gray-200 bg-white lg:h-[65vh]">
+      <div className="flex-1 space-y-2 overflow-y-auto overscroll-contain p-3 sm:p-4">
         {messages.length === 0 && <p className="py-10 text-center text-sm text-gray-500">No messages yet. Say hello!</p>}
         {messages.map((message) => {
           const mine = message.senderId === currentUserId;
@@ -99,7 +99,7 @@ export function ChatThread({
             <div key={message.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
               <div
                 className={cn(
-                  "max-w-[80%] rounded-2xl px-3 py-2 text-sm",
+                  "max-w-[85%] rounded-2xl px-3 py-2 text-sm sm:max-w-[80%]",
                   mine ? "rounded-br-sm bg-red-600 text-white" : "rounded-bl-sm bg-gray-100 text-gray-900",
                 )}
               >
@@ -116,15 +116,16 @@ export function ChatThread({
       {disabledReason ? (
         <p className="border-t border-gray-200 p-4 text-center text-sm text-gray-500">{disabledReason}</p>
       ) : (
-        <form onSubmit={send} className="flex gap-2 border-t border-gray-200 p-3">
+        <form onSubmit={send} className="flex gap-2 border-t border-gray-200 p-2 sm:p-3">
           <input
             value={text}
             onChange={(event) => setText(event.target.value)}
             maxLength={2000}
             placeholder="Type a message…"
+            enterKeyHint="send"
             className={inputClass}
           />
-          <button type="submit" disabled={sending || !text.trim()} className={buttonClass.primary}>
+          <button type="submit" disabled={sending || !text.trim()} className={cn(buttonClass.primary, "shrink-0")}>
             Send
           </button>
         </form>

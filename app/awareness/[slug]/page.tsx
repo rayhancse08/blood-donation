@@ -28,14 +28,14 @@ export default async function ContentPage({ params }: { params: Promise<{ slug: 
         <div className="mt-4 flex flex-wrap gap-1">
           <Badge tone="purple">{contentTypeLabel(item.type)}</Badge>
         </div>
-        <h1 className="mt-3 text-3xl font-bold">{item.title}</h1>
+        <h1 className="mt-3 break-words text-2xl font-bold sm:text-3xl">{item.title}</h1>
         <p className="mt-1 text-sm text-gray-500">
           {item.author?.name ? `${item.author.name} · ` : ""}
           {formatDate(item.createdAt)}
         </p>
         {item.coverUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.coverUrl} alt="" className="mt-6 max-h-96 w-full rounded-xl object-cover" />
+          <img src={item.coverUrl} alt="" className="mt-6 max-h-60 w-full rounded-xl object-cover sm:max-h-96" />
         )}
         {isEvent && (item.eventDate || item.location) && (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm">
@@ -51,8 +51,8 @@ export default async function ContentPage({ params }: { params: Promise<{ slug: 
             )}
           </div>
         )}
-        {item.summary && <p className="mt-6 text-lg text-gray-700">{item.summary}</p>}
-        <div className="mt-6 space-y-4 leading-relaxed text-gray-800">
+        {item.summary && <p className="mt-6 text-base text-gray-700 sm:text-lg">{item.summary}</p>}
+        <div className="mt-6 space-y-4 break-words leading-relaxed text-gray-800">
           {paragraphs.map((paragraph, index) => (
             <p key={index} className="whitespace-pre-line">
               {paragraph}

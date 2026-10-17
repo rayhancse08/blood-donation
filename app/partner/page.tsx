@@ -31,8 +31,8 @@ export default async function PartnerPage() {
         <Card title="Your facilities">
           <ul className="divide-y divide-gray-100">
             {facilities.map((f) => (
-              <li key={f.id} className="flex flex-wrap items-center gap-3 py-3">
-                <div className="min-w-0 flex-1">
+              <li key={f.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
+                <div className="min-w-0 basis-full sm:flex-1 sm:basis-0">
                   <Link href={`/partner/${f.id}`} className="font-semibold hover:underline">
                     {f.name}
                   </Link>
@@ -102,7 +102,7 @@ export default async function PartnerPage() {
               <input name="licenseNumber" required maxLength={60} className={inputClass} />
             </Field>
             <Field label="Licence document" required hint="JPG, PNG or PDF, max 5 MB">
-              <input name="licenseDoc" type="file" required accept="image/jpeg,image/png,image/webp,application/pdf" className="text-sm" />
+              <input name="licenseDoc" type="file" required accept="image/jpeg,image/png,image/webp,application/pdf" className="w-full max-w-full text-sm" />
             </Field>
           </fieldset>
 

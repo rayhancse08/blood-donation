@@ -53,7 +53,7 @@ export default async function AdminPaymentsPage({
     <div className="space-y-6">
       <PageHeader title="Payments & discounts" description="Transaction reports for medicine orders and partner services." />
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Stat label="Successful payments" value={totals._count} />
         <Stat label="Gross amount" value={formatTaka(totals._sum.amount ?? 0)} />
         <Stat label="Discounts given" value={formatTaka(totals._sum.discount ?? 0)} />

@@ -76,7 +76,7 @@ export default async function AdminOverviewPage() {
     <div className="space-y-6">
       <PageHeader title="Admin overview" description="Platform health and items that need your attention." />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Stat label="Users" value={users} hint={`${newUsers30} new in 30 days`} href="/admin/users" />
         <Stat label="Donors" value={donors} hint={`${availableDonors} available now`} href="/admin/users?donor=1" />
         <Stat label="Active requests" value={statusCount("OPEN") + statusCount("ACCEPTED")} hint={`${emergencies30} emergencies in 30 days`} href="/admin/requests" />

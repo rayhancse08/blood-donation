@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { Prisma, RequestStatus } from "@/generated/prisma/client";
+import { FilterPanel } from "@/components/FilterPanel";
 import { LocationFields } from "@/components/LocationFields";
 import { Badge, BloodGroupBadge, BloodGroupSelect, buttonClass, EmptyState, Field, inputClass, PageContainer, PageHeader } from "@/components/ui";
 import { getCurrentUser } from "@/lib/auth";
@@ -65,35 +66,37 @@ export default async function RequestsPage({
         }
       />
 
-      <form className="mb-6 grid gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
-        <Field label="Blood group">
-          <BloodGroupSelect defaultValue={bloodGroup} placeholder="Any" />
-        </Field>
-        <LocationFields filterMode showUpazilaThana={false} defaults={{ division, district }} />
-        <Field label="Status">
-          <select name="status" defaultValue={status} className={inputClass}>
-            <option value="active">Active (open & accepted)</option>
-            {REQUEST_STATUSES.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <div className="flex flex-col gap-2 text-sm">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="emergency" value="1" defaultChecked={emergencyOnly} /> Emergencies only
-          </label>
-          {user && (
-            <label className="flex items-center gap-2">
-              <input type="checkbox" name="mine" value="1" defaultChecked={mine} /> My requests
+      <FilterPanel activeCount={[bloodGroup, division, district, status !== "active", emergencyOnly, mine].filter(Boolean).length}>
+        <form className="grid gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
+          <Field label="Blood group">
+            <BloodGroupSelect defaultValue={bloodGroup} placeholder="Any" />
+          </Field>
+          <LocationFields filterMode showUpazilaThana={false} defaults={{ division, district }} />
+          <Field label="Status">
+            <select name="status" defaultValue={status} className={inputClass}>
+              <option value="active">Active (open & accepted)</option>
+              {REQUEST_STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <div className="flex flex-row flex-wrap gap-x-4 gap-y-2 text-sm sm:flex-col">
+            <label className="flex items-center gap-2 py-1">
+              <input type="checkbox" name="emergency" value="1" defaultChecked={emergencyOnly} /> Emergencies only
             </label>
-          )}
-        </div>
-        <button type="submit" className={buttonClass.dark}>
-          Filter
-        </button>
-      </form>
+            {user && (
+              <label className="flex items-center gap-2 py-1">
+                <input type="checkbox" name="mine" value="1" defaultChecked={mine} /> My requests
+              </label>
+            )}
+          </div>
+          <button type="submit" className={buttonClass.dark}>
+            Filter
+          </button>
+        </form>
+      </FilterPanel>
 
       {requests.length === 0 ? (
         <EmptyState title="No requests found" description="Try different filters, or post a request yourself." />
@@ -103,9 +106,14 @@ export default async function RequestsPage({
             <Link
               key={r.id}
               href={`/requests/${r.id}`}
-              className={`flex gap-4 rounded-xl border bg-white p-4 shadow-sm transition hover:shadow-md ${r.isEmergency ? "border-red-300" : "border-gray-200"}`}
+              className={`flex gap-3 rounded-xl border bg-white p-4 shadow-sm transition hover:shadow-md sm:gap-4 ${r.isEmergency ? "border-red-300" : "border-gray-200"}`}
             >
-              <BloodGroupBadge group={r.bloodGroup} size="lg" />
+              <span className="sm:hidden">
+                <BloodGroupBadge group={r.bloodGroup} size="md" />
+              </span>
+              <span className="hidden sm:block">
+                <BloodGroupBadge group={r.bloodGroup} size="lg" />
+              </span>
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-1">
                   {r.isEmergency && <Badge tone="red">Emergency</Badge>}

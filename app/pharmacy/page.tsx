@@ -49,8 +49,15 @@ export default async function PharmacyPage({
       />
 
       <form className="mb-6 flex gap-2">
-        <input name="q" defaultValue={q} placeholder="Search by brand or generic name, e.g. Napa, Paracetamol" className={inputClass} />
-        <button type="submit" className={buttonClass.primary}>
+        <input
+          name="q"
+          type="search"
+          defaultValue={q}
+          placeholder="Brand or generic name, e.g. Napa"
+          aria-label="Search medicine"
+          className={inputClass}
+        />
+        <button type="submit" className={`${buttonClass.primary} shrink-0`}>
           Search
         </button>
       </form>

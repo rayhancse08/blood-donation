@@ -19,7 +19,7 @@ const NAV_LINKS = [
 
 export function Logo() {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold text-red-600">
+    <Link href="/" className="flex shrink-0 items-center gap-1.5 text-base font-bold text-red-600 sm:gap-2 sm:text-lg">
       <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor" aria-hidden>
         <path d="M12 2.5c-.3 0-.6.2-.8.4C9.6 5 5 11 5 15a7 7 0 0 0 14 0c0-4-4.6-10-6.2-12.1a1 1 0 0 0-.8-.4Z" />
       </svg>
@@ -31,7 +31,7 @@ export function Logo() {
 export function HeaderShell() {
   return (
     <header className="sticky top-0 z-[1100] border-b border-gray-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center px-4">
+      <div className="mx-auto flex h-14 max-w-7xl items-center px-3 sm:h-16 sm:px-4">
         <Logo />
       </div>
     </header>
@@ -43,7 +43,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-[1100] border-b border-gray-200 bg-white/95 backdrop-blur no-print">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4">
         <Logo />
         <nav className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => (
@@ -53,8 +53,11 @@ export async function SiteHeader() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
-          <Link href="/emergency" className="rounded-full bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-red-700">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2">
+          <Link
+            href="/emergency"
+            className="hidden rounded-full bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow hover:bg-red-700 sm:inline-flex"
+          >
             Emergency
           </Link>
 
@@ -94,6 +97,7 @@ export async function SiteHeader() {
                 {user.role === "ADMIN" && <MenuLink href="/admin">Admin panel</MenuLink>}
                 <div className="lg:hidden">
                   <div className="my-1 border-t border-gray-100" />
+                  <MenuLink href="/emergency">Emergency</MenuLink>
                   {NAV_LINKS.map((link) => (
                     <MenuLink key={link.href} href={link.href}>
                       {link.label}
@@ -109,7 +113,7 @@ export async function SiteHeader() {
             </>
           ) : (
             <>
-              <Link href="/login" className="rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-800 hover:bg-gray-100">
+              <Link href="/login" className="whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-800 hover:bg-gray-100">
                 Sign in
               </Link>
               <div className="lg:hidden">
@@ -120,6 +124,7 @@ export async function SiteHeader() {
                     </svg>
                   }
                 >
+                  <MenuLink href="/emergency">Emergency</MenuLink>
                   {NAV_LINKS.map((link) => (
                     <MenuLink key={link.href} href={link.href}>
                       {link.label}
@@ -137,7 +142,7 @@ export async function SiteHeader() {
 
 function MenuLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link href={href} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+    <Link href={href} className="block rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-100 sm:py-2">
       {children}
     </Link>
   );

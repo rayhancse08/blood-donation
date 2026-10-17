@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { FacilityType, Prisma } from "@/generated/prisma/client";
+import { FilterPanel } from "@/components/FilterPanel";
 import { LocationFields } from "@/components/LocationFields";
 import { Badge, buttonClass, EmptyState, Field, inputClass, PageContainer, PageHeader, Tabs } from "@/components/ui";
 import { getCurrentUser } from "@/lib/auth";
@@ -93,32 +94,40 @@ export default async function DirectoryPage({
         ]}
       />
 
-      <form className="mb-6 grid gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
-        <input type="hidden" name="tab" value={tab} />
-        <Field label="Search">
-          <input name="q" defaultValue={q} placeholder={tab === "doctors" ? "Doctor or chamber name" : "Name, area or service"} className={inputClass} />
-        </Field>
-        {tab === "facilities" ? (
-          <Field label="Type">
-            <select name="type" defaultValue={validType ?? ""} className={inputClass}>
-              <option value="">All types</option>
-              {FACILITY_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
+      <FilterPanel activeCount={[q, tab === "facilities" ? validType : speciality, division, district].filter(Boolean).length}>
+        <form className="grid gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+          <input type="hidden" name="tab" value={tab} />
+          <Field label="Search">
+            <input
+              name="q"
+              type="search"
+              defaultValue={q}
+              placeholder={tab === "doctors" ? "Doctor or chamber name" : "Name, area or service"}
+              className={inputClass}
+            />
           </Field>
-        ) : (
-          <Field label="Speciality">
-            <input name="speciality" defaultValue={speciality} placeholder="e.g. Cardiology" className={inputClass} />
-          </Field>
-        )}
-        <LocationFields filterMode showUpazilaThana={false} defaults={{ division, district }} />
-        <button type="submit" className={buttonClass.dark}>
-          Search
-        </button>
-      </form>
+          {tab === "facilities" ? (
+            <Field label="Type">
+              <select name="type" defaultValue={validType ?? ""} className={inputClass}>
+                <option value="">All types</option>
+                {FACILITY_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          ) : (
+            <Field label="Speciality">
+              <input name="speciality" defaultValue={speciality} placeholder="e.g. Cardiology" className={inputClass} />
+            </Field>
+          )}
+          <LocationFields filterMode showUpazilaThana={false} defaults={{ division, district }} />
+          <button type="submit" className={buttonClass.dark}>
+            Search
+          </button>
+        </form>
+      </FilterPanel>
 
       {tab === "facilities" ? (
         sortedFacilities.length === 0 ? (
@@ -139,11 +148,11 @@ export default async function DirectoryPage({
                 {f.distanceKm != null && <p className="text-xs text-gray-500">{formatDistance(f.distanceKm)} away</p>}
                 <div className="mt-auto flex gap-2 pt-3">
                   {f.phone && (
-                    <a href={`tel:${f.phone}`} className={f.type === "AMBULANCE" ? buttonClass.success : buttonClass.secondary}>
+                    <a href={`tel:${f.phone}`} className={`${f.type === "AMBULANCE" ? buttonClass.success : buttonClass.secondary} flex-1 sm:flex-none`}>
                       Call
                     </a>
                   )}
-                  <Link href={`/directory/${f.id}`} className={buttonClass.ghost}>
+                  <Link href={`/directory/${f.id}`} className={`${buttonClass.ghost} flex-1 sm:flex-none`}>
                     Details
                   </Link>
                 </div>

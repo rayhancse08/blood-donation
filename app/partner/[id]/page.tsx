@@ -87,7 +87,7 @@ export default async function ManageFacilityPage({
 
       {tab === "overview" && (
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="grid gap-4 lg:col-span-3 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:col-span-3">
             <Stat label="Payments received" value={paidAgg._count} />
             <Stat label="Revenue via app" value={formatTaka(paidAgg._sum.total ?? 0)} />
             <Stat label="Discounts given" value={formatTaka(paidAgg._sum.discount ?? 0)} />
@@ -178,8 +178,8 @@ async function OrdersTab({ facilityId }: { facilityId: string }) {
         <Card
           key={order.id}
           title={
-            <span>
-              {order.orderNo} <span className="text-sm font-normal text-gray-500">· {formatDateTime(order.createdAt)}</span>
+            <span className="break-words">
+              {order.orderNo} <span className="whitespace-nowrap text-sm font-normal text-gray-500">· {formatDateTime(order.createdAt)}</span>
             </span>
           }
           actions={<Badge tone={ORDER_STATUS_TONE[order.status]}>{orderStatusLabel(order.status)}</Badge>}
@@ -285,37 +285,39 @@ async function StockTab({ facilityId }: { facilityId: string }) {
         {stock.length === 0 ? (
           <p className="text-sm text-gray-600">No medicines listed yet.</p>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase text-gray-500">
-              <tr>
-                <th className="py-2">Medicine</th>
-                <th className="text-right">Price</th>
-                <th className="text-right">Qty</th>
-                <th className="text-right">Updated</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {stock.map((s) => (
-                <tr key={s.id}>
-                  <td className="py-2">
-                    {s.medicine.name} {s.medicine.strength}
-                    {s.medicine.requiresPrescription && <Badge tone="orange">Rx</Badge>}
-                  </td>
-                  <td className="text-right">{toTaka(s.price).toFixed(2)}</td>
-                  <td className={`text-right ${s.quantity === 0 ? "text-red-600" : ""}`}>{s.quantity}</td>
-                  <td className="text-right text-xs text-gray-500">{formatDate(s.updatedAt)}</td>
-                  <td className="text-right">
-                    <form action={removeStockAction.bind(null, facilityId, s.id)}>
-                      <button type="submit" className="text-xs text-red-600 hover:underline">
-                        Remove
-                      </button>
-                    </form>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="text-xs uppercase text-gray-500">
+                <tr>
+                  <th className="py-2">Medicine</th>
+                  <th className="text-right">Price</th>
+                  <th className="text-right">Qty</th>
+                  <th className="text-right">Updated</th>
+                  <th />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {stock.map((s) => (
+                  <tr key={s.id}>
+                    <td className="py-2">
+                      {s.medicine.name} {s.medicine.strength}
+                      {s.medicine.requiresPrescription && <Badge tone="orange">Rx</Badge>}
+                    </td>
+                    <td className="text-right">{toTaka(s.price).toFixed(2)}</td>
+                    <td className={`text-right ${s.quantity === 0 ? "text-red-600" : ""}`}>{s.quantity}</td>
+                    <td className="text-right text-xs text-gray-500">{formatDate(s.updatedAt)}</td>
+                    <td className="text-right">
+                      <form action={removeStockAction.bind(null, facilityId, s.id)}>
+                        <button type="submit" className="py-1 pl-2 text-xs text-red-600 hover:underline">
+                          Remove
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </Card>
     </div>
@@ -404,8 +406,8 @@ async function OffersTab({ facilityId, approved }: { facilityId: string; approve
         ) : (
           <ul className="divide-y divide-gray-100">
             {offers.map((offer) => (
-              <li key={offer.id} className="flex items-center gap-3 py-3">
-                <div className="flex-1">
+              <li key={offer.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
+                <div className="min-w-0 basis-full sm:flex-1 sm:basis-0">
                   <p className="font-medium">{offer.title}</p>
                   <p className="text-xs text-gray-500">
                     {offer.description} · min {offer.minDonations} donation(s)

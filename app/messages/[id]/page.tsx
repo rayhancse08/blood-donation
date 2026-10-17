@@ -46,28 +46,31 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
 
   return (
     <PageContainer className="max-w-3xl space-y-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <Link href="/messages" className="text-sm text-gray-600 hover:underline">
-          ← Messages
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Link href="/messages" aria-label="Back to messages" className="shrink-0 py-1 pr-1 text-sm text-gray-600 hover:underline">
+          ←<span className="hidden sm:inline"> Messages</span>
         </Link>
         <Avatar name={other.name} src={other.photoUrl} />
-        <div className="flex-1">
-          <p className="font-semibold">
-            {other.name ?? "User"} <Badge tone="red">{bloodGroupLabel(other.bloodGroup)}</Badge>{" "}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1">
+            <p className="min-w-0 max-w-full truncate font-semibold">{other.name ?? "User"}</p>
+            <Badge tone="red">{bloodGroupLabel(other.bloodGroup)}</Badge>
             {other.idVerificationStatus === "VERIFIED" && <Badge tone="green">Verified</Badge>}
-          </p>
+          </div>
           {conversation.request && (
-            <Link href={`/requests/${conversation.request.id}`} className="text-xs text-red-600 hover:underline">
+            <Link href={`/requests/${conversation.request.id}`} className="block truncate text-xs text-red-600 hover:underline">
               About request at {conversation.request.hospitalName}
             </Link>
           )}
         </div>
-        <ReportButton reportedUserId={other.id} />
-        <form action={(iBlocked ? unblockUserAction : blockUserAction).bind(null, other.id)}>
-          <button type="submit" className={buttonClass.small}>
-            {iBlocked ? "Unblock" : "Block"}
-          </button>
-        </form>
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <ReportButton reportedUserId={other.id} />
+          <form action={(iBlocked ? unblockUserAction : blockUserAction).bind(null, other.id)}>
+            <button type="submit" className={buttonClass.small}>
+              {iBlocked ? "Unblock" : "Block"}
+            </button>
+          </form>
+        </div>
       </div>
 
       <ChatThread

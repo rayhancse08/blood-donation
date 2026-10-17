@@ -67,7 +67,7 @@ export function AssistantChat({ initialMessages }: { initialMessages: AssistantM
   }
 
   return (
-    <div className="flex h-[70vh] flex-col rounded-xl border border-gray-200 bg-white">
+    <div className="flex h-[calc(100dvh_-_var(--mobile-nav-height)_-_8rem)] min-h-96 flex-col rounded-xl border border-gray-200 bg-white sm:h-[70vh]">
       {emergency && (
         <div className="flex flex-wrap items-center gap-2 border-b border-red-200 bg-red-50 p-3 text-sm text-red-800">
           <strong>Possible emergency.</strong>
@@ -79,14 +79,14 @@ export function AssistantChat({ initialMessages }: { initialMessages: AssistantM
           </a>
         </div>
       )}
-      <div className="flex-1 space-y-3 overflow-y-auto p-4">
+      <div className="flex-1 space-y-3 overflow-y-auto overscroll-contain p-3 sm:p-4">
         {messages.length === 0 && (
           <div className="py-6 text-center">
             <p className="font-semibold">Hi! I can help you with donors, hospitals, medicines and health questions.</p>
             <p className="text-sm text-gray-500">আমি বাংলাতেও উত্তর দিতে পারি।</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {SUGGESTIONS.map((suggestion) => (
-                <button key={suggestion} type="button" onClick={() => ask(suggestion)} className={buttonClass.small}>
+                <button key={suggestion} type="button" onClick={() => ask(suggestion)} className={cn(buttonClass.small, "text-left")}>
                   {suggestion}
                 </button>
               ))}
@@ -97,7 +97,7 @@ export function AssistantChat({ initialMessages }: { initialMessages: AssistantM
           <div key={message.id} className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}>
             <div
               className={cn(
-                "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2 text-sm",
+                "max-w-[90%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm sm:max-w-[85%] sm:px-4",
                 message.role === "user" ? "rounded-br-sm bg-red-600 text-white" : "rounded-bl-sm bg-gray-100 text-gray-900",
               )}
             >
@@ -113,16 +113,17 @@ export function AssistantChat({ initialMessages }: { initialMessages: AssistantM
           event.preventDefault();
           ask(text);
         }}
-        className="flex gap-2 border-t border-gray-200 p-3"
+        className="flex gap-2 border-t border-gray-200 p-2 sm:p-3"
       >
         <input
           value={text}
           onChange={(event) => setText(event.target.value)}
           maxLength={1000}
           placeholder="Ask in English or বাংলা…"
+          enterKeyHint="send"
           className={inputClass}
         />
-        <button type="submit" disabled={loading || !text.trim()} className={buttonClass.primary}>
+        <button type="submit" disabled={loading || !text.trim()} className={cn(buttonClass.primary, "shrink-0")}>
           Ask
         </button>
       </form>

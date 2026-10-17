@@ -36,14 +36,14 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
 
   return (
     <PageContainer className="max-w-4xl space-y-6">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-wrap gap-1">
           <Badge tone="blue">{facilityTypeLabel(facility.type)}</Badge>
           {facility.is24Hours && <Badge tone="green">Open 24 hours</Badge>}
           {isPartner && <Badge tone="red">Partner{discount ? ` · ${discount}% discount` : ""}</Badge>}
           {facility.licenseVerified && <Badge tone="green">Licence verified</Badge>}
         </div>
-        <h1 className="mt-2 text-3xl font-bold">{facility.name}</h1>
+        <h1 className="mt-2 break-words text-2xl font-bold sm:text-3xl">{facility.name}</h1>
         {facility.description && <p className="mt-2 text-gray-600">{facility.description}</p>}
 
         <div className="mt-4 flex flex-wrap gap-2">
@@ -127,8 +127,8 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
           ) : (
             <ul className="divide-y divide-gray-100">
               {facility.stock.map((item) => (
-                <li key={item.id} className="flex items-center gap-3 py-3">
-                  <div className="min-w-0 flex-1">
+                <li key={item.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
+                  <div className="min-w-0 basis-full sm:flex-1 sm:basis-0">
                     <Link href={`/pharmacy/medicines/${item.medicineId}`} className="font-medium hover:underline">
                       {item.medicine.name} {item.medicine.strength}
                     </Link>
@@ -137,7 +137,7 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
                       {item.medicine.requiresPrescription && " · Prescription required"}
                     </p>
                   </div>
-                  <p className="w-24 text-right font-semibold">{formatTaka(item.price)}</p>
+                  <p className="flex-1 font-semibold sm:w-24 sm:flex-none sm:text-right">{formatTaka(item.price)}</p>
                   {facility.isActive && (
                     <AddToCartButton
                       pharmacy={{ id: facility.id, name: facility.name, discountPercent: discount }}

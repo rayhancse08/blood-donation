@@ -94,7 +94,7 @@ export default async function DonationsPage({
         </Card>
 
         <Card title="Badges" className="lg:col-span-2">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {[...rewards.earnedBadges, ...rewards.lockedBadges].map((badge) => {
               const earned = verifiedCount >= badge.min;
               return (
@@ -158,7 +158,7 @@ export default async function DonationsPage({
             <table className="w-full text-left text-sm">
               <thead className="text-xs uppercase text-gray-500">
                 <tr>
-                  <th className="py-2">Date</th>
+                  <th className="whitespace-nowrap py-2 pr-3">Date</th>
                   <th>Place</th>
                   <th>Receiver / request</th>
                   <th>Status</th>
@@ -168,7 +168,7 @@ export default async function DonationsPage({
               <tbody className="divide-y divide-gray-100">
                 {donations.map((d) => (
                   <tr key={d.id}>
-                    <td className="py-3">{formatDate(d.donatedAt)}</td>
+                    <td className="whitespace-nowrap py-3 pr-3">{formatDate(d.donatedAt)}</td>
                     <td>{d.place}</td>
                     <td>
                       {d.request ? (

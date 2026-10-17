@@ -3,6 +3,14 @@
 :root {
   --background: #f9fafb;
   --foreground: #111827;
+  /* Height of the fixed bottom navigation (`MobileNav`), which is only shown below `lg`. */
+  --mobile-nav-height: 0px;
+}
+
+@media (max-width: 1023.98px) {
+  :root {
+    --mobile-nav-height: calc(4rem + env(safe-area-inset-bottom));
+  }
 }
 
 @theme inline {
@@ -16,6 +24,20 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  padding-bottom: var(--mobile-nav-height);
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Wide data tables scroll sideways inside their wrapper on small screens instead of squashing columns. */
+@media (max-width: 767.98px) {
+  .overflow-x-auto > table {
+    min-width: 40rem;
+  }
 }
 
 /* Map pins (Leaflet divIcon) */
@@ -120,5 +142,6 @@ body {
   }
   body {
     background: #fff;
+    padding-bottom: 0;
   }
 }

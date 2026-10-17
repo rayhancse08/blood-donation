@@ -83,13 +83,13 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="mb-6 inline-grid grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1">
+      <div className="mb-6 grid w-full grid-cols-2 gap-1 rounded-xl bg-gray-100 p-1 sm:inline-grid sm:w-auto">
         {(["RECEIVER", "DONOR"] as const).map((value) => (
           <form key={value} action={switchModeAction.bind(null, value)}>
             <button
               type="submit"
               className={cn(
-                "w-full rounded-lg px-6 py-2 text-sm font-semibold",
+                "w-full rounded-lg px-3 py-2 text-sm font-semibold sm:px-6",
                 mode === value ? "bg-white text-red-600 shadow" : "text-gray-600 hover:text-gray-900",
               )}
             >
@@ -159,8 +159,14 @@ export default async function DashboardPage() {
                           {r.distanceKm != null ? ` · ${formatDistance(r.distanceKm)}` : r.district ? ` · ${r.district}` : ""}
                         </p>
                       </div>
-                      {r.isEmergency && <Badge tone="red">Emergency</Badge>}
-                      {r.responses[0] && <Badge tone={r.responses[0].status === "ACCEPTED" ? "green" : "gray"}>{r.responses[0].status.toLowerCase()}</Badge>}
+                      {(r.isEmergency || r.responses[0]) && (
+                        <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center">
+                          {r.isEmergency && <Badge tone="red">Emergency</Badge>}
+                          {r.responses[0] && (
+                            <Badge tone={r.responses[0].status === "ACCEPTED" ? "green" : "gray"}>{r.responses[0].status.toLowerCase()}</Badge>
+                          )}
+                        </div>
+                      )}
                     </Link>
                   </li>
                 ))}
@@ -169,7 +175,7 @@ export default async function DashboardPage() {
           </Card>
 
           <Card title="Your rewards" className="lg:col-span-3" actions={<Link href="/donations" className="text-sm text-red-600 hover:underline">History & certificates</Link>}>
-            <div className="flex flex-wrap items-center gap-6">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
               <div>
                 <p className="text-sm text-gray-500">Level</p>
                 <p className="text-xl font-bold">{rewards.level.name}</p>
@@ -179,7 +185,7 @@ export default async function DashboardPage() {
                 <p className="text-xl font-bold">{verifiedDonations}</p>
               </div>
               {rewards.nextLevel && (
-                <div className="min-w-60 flex-1">
+                <div className="min-w-0 basis-full sm:min-w-60 sm:flex-1 sm:basis-0">
                   <p className="text-sm text-gray-500">
                     {rewards.nextLevel.min - verifiedDonations} more to reach {rewards.nextLevel.name}
                   </p>
@@ -193,7 +199,7 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="grid gap-4 sm:grid-cols-2 lg:col-span-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-3 lg:grid-cols-4">
             <Stat label="Compatible donors nearby" value={nearbyDonors} hint={user.district ?? "All areas"} href={`/map?bloodGroup=${user.bloodGroup ?? ""}&compatible=1`} />
             <Stat label="Your requests" value={myRequests.length} href="/requests?mine=1" />
             <Stat label="Unread notifications" value={unread.length} href="/notifications" />

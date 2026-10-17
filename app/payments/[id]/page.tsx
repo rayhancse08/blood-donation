@@ -34,15 +34,15 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         </Link>
         <PrintButton label="Print receipt" />
       </div>
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-lg font-bold text-red-600">Blood App</p>
             <p className="text-xs text-gray-500">Payment receipt</p>
           </div>
           <Badge tone={PAYMENT_STATUS_TONE[payment.status]}>{payment.status.toLowerCase()}</Badge>
         </div>
-        <p className="mt-6 text-3xl font-extrabold">{formatTaka(payment.total)}</p>
+        <p className="mt-6 text-2xl font-extrabold sm:text-3xl">{formatTaka(payment.total)}</p>
         <dl className="mt-6">
           <KeyValue label="Receipt no.">{payment.receiptNo}</KeyValue>
           <KeyValue label="Paid by">{payment.user.name ?? payment.user.phone ?? payment.user.email}</KeyValue>

@@ -41,51 +41,59 @@ export default async function HomePage() {
   return (
     <div>
       <section className="bg-gradient-to-br from-red-600 via-red-600 to-rose-700 text-white">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-2 lg:py-24">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:gap-10 sm:py-16 lg:grid-cols-2 lg:py-24">
           <div>
             <p className="mb-3 inline-block rounded-full bg-white/15 px-3 py-1 text-sm">Every drop counts</p>
-            <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl">Find blood donors near you, in minutes.</h1>
-            <p className="mt-4 max-w-xl text-lg text-red-50">
+            <h1 className="text-3xl font-extrabold leading-tight sm:text-5xl">Find blood donors near you, in minutes.</h1>
+            <p className="mt-4 max-w-xl text-base text-red-50 sm:text-lg">
               Blood App connects donors and receivers using live location, blood group and verified profiles, with
               emergency alerts, hospitals, ambulances, medicine and payments in one place.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/map" className="rounded-lg bg-white px-5 py-3 font-semibold text-red-700 shadow hover:bg-red-50">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:flex sm:flex-wrap">
+              <Link
+                href="/map"
+                className="col-span-2 rounded-lg bg-white px-5 py-3 text-center font-semibold text-red-700 shadow hover:bg-red-50 sm:col-span-1"
+              >
                 Find donors
               </Link>
-              <Link href="/requests/new" className="rounded-lg border border-white/60 px-5 py-3 font-semibold hover:bg-white/10">
+              <Link href="/requests/new" className="rounded-lg border border-white/60 px-4 py-3 text-center font-semibold hover:bg-white/10 sm:px-5">
                 Request blood
               </Link>
-              <Link href="/profile#roles" className="rounded-lg border border-white/60 px-5 py-3 font-semibold hover:bg-white/10">
+              <Link href="/profile#roles" className="rounded-lg border border-white/60 px-4 py-3 text-center font-semibold hover:bg-white/10 sm:px-5">
                 Become a donor
               </Link>
             </div>
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-6 backdrop-blur">
-            <Link href="/emergency" className="flex items-center justify-between rounded-xl bg-white p-5 text-red-700 shadow-lg transition hover:scale-[1.01]">
-              <span>
-                <span className="block text-xl font-bold">Emergency? Get blood now</span>
+          <div className="rounded-2xl bg-white/10 p-4 backdrop-blur sm:p-6">
+            <Link
+              href="/emergency"
+              className="flex items-center justify-between gap-3 rounded-xl bg-white p-4 text-red-700 shadow-lg transition hover:scale-[1.01] sm:p-5"
+            >
+              <span className="min-w-0">
+                <span className="block text-lg font-bold sm:text-xl">Emergency? Get blood now</span>
                 <span className="text-sm text-gray-600">One tap alerts matching donors nearby</span>
               </span>
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-2xl font-black text-white">!</span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-600 text-2xl font-black text-white sm:h-14 sm:w-14">
+                !
+              </span>
             </Link>
-            <div className="mt-6 grid grid-cols-3 gap-3 text-center">
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-3xl font-bold">{availableDonors}</p>
-                <p className="text-xs text-red-100">Donors available now</p>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center sm:mt-6 sm:gap-3">
+              <div className="rounded-xl bg-white/10 p-2 sm:p-4">
+                <p className="text-2xl font-bold sm:text-3xl">{availableDonors}</p>
+                <p className="text-[11px] leading-tight text-red-100 sm:text-xs">Donors available now</p>
               </div>
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-3xl font-bold">{activeRequests}</p>
-                <p className="text-xs text-red-100">Active requests</p>
+              <div className="rounded-xl bg-white/10 p-2 sm:p-4">
+                <p className="text-2xl font-bold sm:text-3xl">{activeRequests}</p>
+                <p className="text-[11px] leading-tight text-red-100 sm:text-xs">Active requests</p>
               </div>
-              <div className="rounded-xl bg-white/10 p-4">
-                <p className="text-3xl font-bold">{verifiedDonations}</p>
-                <p className="text-xs text-red-100">Verified donations</p>
+              <div className="rounded-xl bg-white/10 p-2 sm:p-4">
+                <p className="text-2xl font-bold sm:text-3xl">{verifiedDonations}</p>
+                <p className="text-[11px] leading-tight text-red-100 sm:text-xs">Verified donations</p>
               </div>
             </div>
             {emergencies.length > 0 && (
-              <div className="mt-6 space-y-2">
+              <div className="mt-4 space-y-2 sm:mt-6">
                 <p className="text-sm font-semibold">Live emergency requests</p>
                 {emergencies.map((request) => (
                   <Link key={request.id} href={`/requests/${request.id}`} className="flex items-center gap-3 rounded-lg bg-white/90 p-3 text-gray-900 hover:bg-white">
@@ -103,14 +111,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <h2 className="text-center text-3xl font-bold">More than blood donation</h2>
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <h2 className="text-center text-2xl font-bold sm:text-3xl">More than blood donation</h2>
         <p className="mx-auto mt-2 max-w-2xl text-center text-gray-600">
           Everything you need in a medical emergency, and to stay healthy every day.
         </p>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {FEATURES.map((feature) => (
-            <Link key={feature.title} href={feature.href} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            <Link
+              key={feature.title}
+              href={feature.href}
+              className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:p-5"
+            >
               <h3 className="font-semibold text-gray-900">{feature.title}</h3>
               <p className="mt-2 text-sm text-gray-600">{feature.text}</p>
             </Link>
@@ -118,17 +130,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
+      <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4">
-          <h2 className="text-3xl font-bold">How it works</h2>
-          <ol className="mt-8 grid gap-6 md:grid-cols-4">
+          <h2 className="text-2xl font-bold sm:text-3xl">How it works</h2>
+          <ol className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-6 md:grid-cols-4">
             {[
               ["Sign up", "Register with your phone, email or Google. Everyone starts as a receiver."],
               ["Become a donor", "Turn on the donor role and set yourself as available whenever you can give."],
               ["Match & connect", "Requests alert compatible donors nearby. Accept, chat and call in the app."],
               ["Donate & get rewarded", "Submit proof, rest for 3 months while hidden, and earn badges and offers."],
             ].map(([title, text], index) => (
-              <li key={title} className="rounded-xl bg-gray-50 p-5">
+              <li key={title} className="rounded-xl bg-gray-50 p-4 sm:p-5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white">{index + 1}</span>
                 <p className="mt-3 font-semibold">{title}</p>
                 <p className="mt-1 text-sm text-gray-600">{text}</p>
@@ -139,16 +151,16 @@ export default async function HomePage() {
       </section>
 
       {latestContent.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-3xl font-bold">Health awareness</h2>
+        <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+          <div className="mb-6 flex items-end justify-between gap-3">
+            <h2 className="text-2xl font-bold sm:text-3xl">Health awareness</h2>
             <Link href="/awareness" className={buttonClass.secondary}>
               View all
             </Link>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {latestContent.map((item) => (
-              <Link key={item.id} href={`/awareness/${item.slug}`} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md">
+              <Link key={item.id} href={`/awareness/${item.slug}`} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md sm:p-5">
                 <Badge tone="purple">{contentTypeLabel(item.type)}</Badge>
                 <h3 className="mt-3 font-semibold">{item.title}</h3>
                 {item.summary && <p className="mt-1 line-clamp-3 text-sm text-gray-600">{item.summary}</p>}

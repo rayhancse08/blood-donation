@@ -44,10 +44,10 @@ export default async function MedicinePage({ params }: { params: Promise<{ id: s
 
   return (
     <PageContainer className="max-w-4xl space-y-6">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-3xl font-bold">
-            {medicine.name} <span className="text-xl font-normal text-gray-500">{medicine.strength}</span>
+          <h1 className="break-words text-2xl font-bold sm:text-3xl">
+            {medicine.name} <span className="text-lg font-normal text-gray-500 sm:text-xl">{medicine.strength}</span>
           </h1>
           {medicine.requiresPrescription ? <Badge tone="orange">Prescription required</Badge> : <Badge tone="green">OTC</Badge>}
         </div>
@@ -85,8 +85,8 @@ export default async function MedicinePage({ params }: { params: Promise<{ id: s
         ) : (
           <ul className="divide-y divide-gray-100">
             {offers.map((offer) => (
-              <li key={offer.id} className="flex flex-wrap items-center gap-3 py-3">
-                <div className="min-w-0 flex-1">
+              <li key={offer.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
+                <div className="min-w-0 basis-full sm:flex-1 sm:basis-0">
                   <Link href={`/directory/${offer.pharmacy.id}`} className="font-medium hover:underline">
                     {offer.pharmacy.name}
                   </Link>
@@ -95,7 +95,7 @@ export default async function MedicinePage({ params }: { params: Promise<{ id: s
                     {offer.distanceKm != null && ` · ${formatDistance(offer.distanceKm)}`} · {offer.quantity} in stock
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="flex-1 sm:flex-none sm:text-right">
                   <p className="font-semibold">{formatTaka(offer.finalPrice)}</p>
                   {offer.discountPercent > 0 && (
                     <p className="text-xs text-gray-500">

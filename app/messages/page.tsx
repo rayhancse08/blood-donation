@@ -46,14 +46,14 @@ export default async function MessagesPage({
                 <Link href={`/messages/${c.id}`} className="flex items-center gap-3 p-4 hover:bg-gray-50">
                   <Avatar name={other.name} src={other.photoUrl} />
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium">
+                    <p className="truncate font-medium">
                       {other.name ?? "User"} <span className="text-xs text-gray-500">{bloodGroupLabel(other.bloodGroup)}</span>
                     </p>
                     <p className="truncate text-sm text-gray-600">
                       {last ? `${last.senderId === user.id ? "You: " : ""}${last.body}` : "No messages yet"}
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
+                  <div className="flex shrink-0 flex-col items-end gap-1">
                     <span className="text-xs text-gray-400">{timeAgo(c.lastMessageAt, now)}</span>
                     {c._count.messages > 0 && <Badge tone="red">{c._count.messages}</Badge>}
                   </div>
