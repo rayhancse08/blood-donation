@@ -10,8 +10,8 @@ export function ProfileFields({ user, onboarding = false }: { user: User; onboar
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Avatar name={user.name} src={user.photoUrl} size={64} />
-        <Field label="Profile photo" hint="JPG, PNG or WEBP, max 5 MB">
-          <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" className="text-sm" />
+        <Field label="Profile photo" hint="JPG, PNG or WEBP, max 5 MB" className="min-w-0 flex-1">
+          <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" className="w-full max-w-full text-sm" />
         </Field>
       </div>
 

@@ -28,9 +28,22 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body {
-  overflow-x: clip;
+/*
+ * Grid and flex children default to `min-width: auto`, so a single long word, URL or `truncate`d line
+ * stretches a single-column mobile grid (and the page) wider than the screen. In the base layer so
+ * `min-w-*` utilities still win.
+ */
+@layer base {
+  .grid > *,
+  .flex-1 {
+    min-width: 0;
+  }
+
+  img,
+  video,
+  input[type="file"] {
+    max-width: 100%;
+  }
 }
 
 /* Wide data tables scroll sideways inside their wrapper on small screens instead of squashing columns. */

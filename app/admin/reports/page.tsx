@@ -102,7 +102,7 @@ export default async function AdminReportsPage({
                         <input type="checkbox" name="cancelRequest" /> Close the reported request
                       </label>
                     )}
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <button formAction={resolveReportAction.bind(null, r.id, "RESOLVED")} className={buttonClass.dark}>
                         Resolve
                       </button>

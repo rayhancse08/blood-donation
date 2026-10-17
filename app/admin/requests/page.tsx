@@ -75,7 +75,7 @@ export default async function AdminRequestsPage({
                     {r.hospitalName}
                     {r.district ? `, ${r.district}` : ""}
                   </p>
-                  <div className="mt-1 flex gap-1">
+                  <div className="mt-1 flex flex-wrap gap-1">
                     {r.isEmergency && <Badge tone="red">Emergency</Badge>}
                     <Badge tone={URGENCY_TONE[r.urgency]}>{labelOf(URGENCIES, r.urgency)}</Badge>
                     {r._count.reports > 0 && <Badge tone="orange">{r._count.reports} report(s)</Badge>}

@@ -98,7 +98,7 @@ export function LoginForm({ next, error }: { next?: string; error?: string }) {
               placeholder="6-digit code"
               required
               autoFocus
-              className={`${inputClass} text-center text-lg tracking-[0.5em]`}
+              className={`${inputClass} text-center text-lg tracking-[0.5em] sm:text-lg`}
             />
           </Field>
           {verifyState.error && <Alert tone="error">{verifyState.error}</Alert>}
